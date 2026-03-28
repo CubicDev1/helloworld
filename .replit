@@ -1,0 +1,17 @@
+modules = ["nodejs-20", "web"]
+[agent]
+expertMode = true
+
+[nix]
+channel = "stable-25_05"
+
+[workflows]
+
+[[workflows.workflow]]
+name = "start"
+mode = "sequential"
+author = 11325534
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx start expo"
