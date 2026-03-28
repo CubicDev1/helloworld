@@ -2,18 +2,14 @@ import {SplashScreen, Stack, usePathname, useGlobalSearchParams} from "expo-rout
 import '@/global.css';
 import {useFonts} from "expo-font";
 import {useEffect, useRef} from "react";
-import { ClerkProvider, useAuth } from '@clerk/expo';
-import { tokenCache } from '@clerk/expo/token-cache';
+import { AuthProvider, useAuth } from '@/lib/auth';
 import { PostHogProvider } from 'posthog-react-native';
 import { posthog } from '../src/config/posthog';
 
 SplashScreen.preventAutoHideAsync();
 
-const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
-
-if (!publishableKey) {
-  throw new Error('Add your Clerk Publishable Key to the .env file');
-}
+// Firebase logic doesn't strictly need a publishable key in the layout setup.
+// You will need to add Firebase credentials to your environment variables.
 
 function RootLayoutContent() {
   const { isLoaded: authLoaded } = useAuth();
@@ -72,9 +68,9 @@ export default function RootLayout() {
         propsToCapture: ['testID'],
       }}
     >
-      <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+      <AuthProvider>
         <RootLayoutContent />
-      </ClerkProvider>
+      </AuthProvider>
     </PostHogProvider>
   );
 }

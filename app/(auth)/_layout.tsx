@@ -1,5 +1,5 @@
 import { Stack, Redirect } from "expo-router";
-import { useAuth } from '@clerk/expo';
+import { useAuth } from '@/lib/auth';
 import '@/global.css';
 
 export default function AuthLayout() {
