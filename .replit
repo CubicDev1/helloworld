@@ -23,4 +23,21 @@ author = 11325534
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npx expo start --tunnel"
+args = "npx expo start --tunnel -c"
+
+[[workflows.workflow]]
+name = "install"
+mode = "sequential"
+author = 11325534
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
+
+[[ports]]
+localPort = 8081
+externalPort = 80
+
+[[ports]]
+localPort = 8082
+externalPort = 3000
