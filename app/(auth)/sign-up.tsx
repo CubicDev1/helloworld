@@ -42,7 +42,7 @@ const SignUp = () => {
                 $set: { email: emailAddress },
                 $set_once: { sign_up_date: new Date().toISOString() },
             });
-            posthog.capture('user_signed_up', { email: emailAddress });
+            posthog.capture('user_signed_up');
 
             router.replace('/(tabs)' as Href);
         } catch (error: any) {
@@ -50,6 +50,16 @@ const SignUp = () => {
             setErrorMsg(error.message || 'An error occurred during sign up');
             posthog.capture('user_sign_up_failed', {
                 error_message: error.message,
+            });
+            posthog.capture('$exception', {
+                $exception_list: [
+                    {
+                        type: error.name,
+                        value: error.message,
+                        stacktrace: { type: 'raw', frames: error.stack ?? '' },
+                    },
+                ],
+                $exception_source: 'sign-up',
             });
         } finally {
             setIsLoading(false);

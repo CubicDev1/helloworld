@@ -40,7 +40,7 @@ const SignIn = () => {
                 $set: { email: emailAddress },
                 $set_once: { first_sign_in_date: new Date().toISOString() },
             });
-            posthog.capture('user_signed_in', { email: emailAddress });
+            posthog.capture('user_signed_in');
 
             router.replace('/(tabs)' as Href);
         } catch (error: any) {
@@ -48,6 +48,16 @@ const SignIn = () => {
             setErrorMsg(error.message || 'An error occurred during sign in');
             posthog.capture('user_sign_in_failed', {
                 error_message: error.message,
+            });
+            posthog.capture('$exception', {
+                $exception_list: [
+                    {
+                        type: error.name,
+                        value: error.message,
+                        stacktrace: { type: 'raw', frames: error.stack ?? '' },
+                    },
+                ],
+                $exception_source: 'sign-in',
             });
         } finally {
             setIsLoading(false);

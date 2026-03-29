@@ -1,9 +1,10 @@
 import {Text, View, TextInput, FlatList} from 'react-native'
 import {SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
 import { styled } from "nativewind";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import SubscriptionCard from "@/components/SubscriptionCard";
 import { useSubscriptionStore } from "@/lib/subscriptionStore";
+import { usePostHog } from 'posthog-react-native';
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -11,6 +12,18 @@ const Subscriptions = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const { subscriptions } = useSubscriptionStore();
+    const posthog = usePostHog();
+    const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const handleSearchChange = (text: string) => {
+        setSearchQuery(text);
+        if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+        if (text.trim()) {
+            searchDebounceRef.current = setTimeout(() => {
+                posthog.capture('subscription_searched', { query: text.trim() });
+            }, 600);
+        }
+    };
 
     const filteredSubscriptions = subscriptions.filter((subscription) =>
         subscription.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -31,7 +44,7 @@ const Subscriptions = () => {
                             placeholder="Search subscriptions..."
                             placeholderTextColor="#666"
                             value={searchQuery}
-                            onChangeText={setSearchQuery}
+                            onChangeText={handleSearchChange}
                         />
                     </View>
                 }
