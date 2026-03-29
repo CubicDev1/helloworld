@@ -8,13 +8,49 @@ channel = "stable-25_05"
 [workflows]
 
 [[workflows.workflow]]
+name = "tunnel"
+mode = "sequential"
+author = 11325534
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx expo start --lan"
+
+[[workflows.workflow]]
+name = "lcaol"
+mode = "sequential"
+author = 11325534
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx expo start --localhost"
+
+[[workflows.workflow]]
+name = "web"
+mode = "sequential"
+author = 11325534
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx expo start --web"
+
+[[workflows.workflow]]
+name = "go"
+mode = "sequential"
+author = 11325534
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx expo start --web --go"
+
+[[workflows.workflow]]
 name = "start"
 mode = "sequential"
 author = 11325534
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npx expo start --tunnel"
+args = "npx expo start --go -c --tunnel"
 
 [[ports]]
 localPort = 8081
