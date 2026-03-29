@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "react_native-recurrly",
-    "slug": "react_native-recurrly",
+    "name": "grocify",
+    "slug": "grocify",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "reactnativerecurrly",
+    "scheme": "grocify",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.devburakork.grocify"
     },
     "android": {
       "adaptiveIcon": {
@@ -18,41 +18,35 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.devburakork.grocify"
     },
     "web": {
-      "output": "static",
+      "output": "server",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "@clerk/expo",
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
-          "dark": {
-            "backgroundColor": "#000000"
+          "backgroundColor": "#208AEF",
+          "android": {
+            "image": "./assets/images/splash-icon.png",
+            "imageWidth": 76
           }
         }
       ],
+      "expo-web-browser",
       [
-        "expo-font",
+        "@sentry/react-native/expo",
         {
-          "fonts": [
-            "./assets/fonts/PlusJakartaSans-Regular.ttf",
-            "./assets/fonts/PlusJakartaSans-Bold.ttf",
-            "./assets/fonts/PlusJakartaSans-Medium.ttf",
-            "./assets/fonts/PlusJakartaSans-SemiBold.ttf",
-            "./assets/fonts/PlusJakartaSans-ExtraBold.ttf",
-            "./assets/fonts/PlusJakartaSans-Light.ttf"
-          ]
+          "url": "https://sentry.io/",
+          "project": "grocify",
+          "organization": "codesistency-gs"
         }
-      ],
-      "expo-secure-store"
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
