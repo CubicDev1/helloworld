@@ -1,4 +1,4 @@
-import { useClerk, useUser } from "@clerk/expo";
+import { useClerk, useUser } from "@/providers/AuthProvider";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Pressable, Text, View } from "react-native";

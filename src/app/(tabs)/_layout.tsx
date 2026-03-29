@@ -1,5 +1,5 @@
 import { useGroceryStore } from "@/store/grocery-store";
-import { useAuth } from "@clerk/expo";
+import { useAuth } from "@/providers/AuthProvider";
 import { Redirect } from "expo-router";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { useColorScheme } from "nativewind";
