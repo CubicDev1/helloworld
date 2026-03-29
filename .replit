@@ -15,3 +15,12 @@ author = 11325534
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npx start expo"
+
+[[workflows.workflow]]
+name = "qwertyuiop["
+mode = "sequential"
+author = 11325534
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx expo start --tunnel"
