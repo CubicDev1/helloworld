@@ -1,15 +1,19 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import * as SecureStore from "expo-secure-store";
+import { Platform } from "react-native";
 
 const secureStorage = {
   getItem: async (name: string): Promise<string | null> => {
+    if (Platform.OS === "web") return localStorage.getItem(name);
     return SecureStore.getItemAsync(name);
   },
   setItem: async (name: string, value: string): Promise<void> => {
+    if (Platform.OS === "web") return localStorage.setItem(name, value);
     return SecureStore.setItemAsync(name, value);
   },
   removeItem: async (name: string): Promise<void> => {
+    if (Platform.OS === "web") return localStorage.removeItem(name);
     return SecureStore.deleteItemAsync(name);
   },
 };
