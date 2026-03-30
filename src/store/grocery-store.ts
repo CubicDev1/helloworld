@@ -34,6 +34,17 @@ type GroceryStore = {
   clearPurchased: () => Promise<void>;
 };
 
+// Helper function to safely parse API responses, preventing HTML crash bugs.
+const safeFetchJson = async (res: Response) => {
+  const contentType = res.headers.get("content-type");
+  if (!contentType || !contentType.includes("application/json")) {
+    const text = await res.text();
+    console.warn("API returned invalid JSON/HTML:", text.substring(0, 300));
+    throw new Error(`Server returned an invalid response (not JSON). Status: ${res.status}. Check Metro terminal for errors.`);
+  }
+  return res.json();
+};
+
 export const useGroceryStore = create<GroceryStore>((set, get) => ({
   items: [],
   isLoading: false,
@@ -43,13 +54,13 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const res = await fetch("/api/items");
-      const payload = (await res.json()) as ItemsResponse & { error?: string };
+      const payload = (await safeFetchJson(res)) as ItemsResponse & { error?: string };
 
       if (!res.ok) throw new Error(payload.error || `Request failed (${res.status})`);
       set({ items: payload.items });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error loading items:", error);
-      set({ error: "Something went wrong" });
+      set({ error: error.message || "Something went wrong" });
     } finally {
       set({ isLoading: false });
     }
@@ -68,14 +79,14 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
           priority: input.priority,
         }),
       });
-      const payload = (await res.json()) as ItemResponse & { error?: string };
+      const payload = (await safeFetchJson(res)) as ItemResponse & { error?: string };
       if (!res.ok) throw new Error(payload.error || `Request failed (${res.status})`);
 
       set((state) => ({ items: [payload.item, ...state.items] }));
       return payload.item;
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error adding item:", error);
-      set({ error: "Something went wrong" });
+      set({ error: error.message || "Something went wrong" });
     }
   },
   updateQuantity: async (id, quantity) => {
@@ -88,14 +99,14 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ quantity: nextQuantity }),
       });
-      const payload = (await res.json()) as ItemResponse & { error?: string };
+      const payload = (await safeFetchJson(res)) as ItemResponse & { error?: string };
       if (!res.ok) throw new Error(payload.error || `Request failed (${res.status})`);
       set((state) => ({
         items: state.items.map((item) => (item.id === id ? payload.item : item)),
       }));
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating quantity:", error);
-      set({ error: "Something went wrong" });
+      set({ error: error.message || "Something went wrong" });
     }
   },
 
@@ -112,15 +123,15 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
         body: JSON.stringify({ purchased: nextPurchased }),
       });
 
-      const payload = (await res.json()) as ItemResponse & { error?: string };
+      const payload = (await safeFetchJson(res)) as ItemResponse & { error?: string };
       if (!res.ok) throw new Error(payload.error || `Request failed (${res.status})`);
 
       set((state) => ({
         items: state.items.map((item) => (item.id === id ? payload.item : item)),
       }));
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error toggling purchased:", error);
-      set({ error: "Something went wrong" });
+      set({ error: error.message || "Something went wrong" });
     }
   },
 
@@ -129,14 +140,14 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
     try {
       const res = await fetch(`/api/items/${id}`, { method: "DELETE" });
       if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || `Request failed (${res.status})`);
+        const payload = await safeFetchJson(res).catch(() => ({}));
+        throw new Error(payload.error || `Request failed (${res.status})`);
       }
 
       set((state) => ({ items: state.items.filter((item) => item.id !== id) }));
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error removing item:", error);
-      set({ error: "Something went wrong" });
+      set({ error: error.message || "Something went wrong" });
     }
   },
 
@@ -145,15 +156,15 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
     try {
       const res = await fetch("/api/items/clear-purchased", { method: "POST" });
       if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || `Request failed (${res.status})`);
+        const payload = await safeFetchJson(res).catch(() => ({}));
+        throw new Error(payload.error || `Request failed (${res.status})`);
       }
 
       const items = get().items.filter((item) => !item.purchased);
       set({ items });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error clearing purchased:", error);
-      set({ error: "Something went wrong" });
+      set({ error: error.message || "Something went wrong" });
     }
   },
 }));
