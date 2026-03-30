@@ -1,22 +1,19 @@
 import { useGroceryStore } from "@/store/grocery-store";
 import { useAuth } from "@/providers/AuthProvider";
-import { Redirect } from "expo-router";
-import { NativeTabs } from "expo-router/unstable-native-tabs";
+import { Redirect, Tabs } from "expo-router";
 import { useColorScheme } from "nativewind";
 import { useEffect } from "react";
+import { CustomTabBar } from "@/components/CustomTabBar";
 
 export default function TabsLayout() {
   const { isSignedIn, isLoaded } = useAuth();
-
-  const { loadItems, items } = useGroceryStore();
-
-  const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === "dark";
-  const tabTintColor = isDark ? "hsl(142 70% 54%)" : "hsl(147 75% 33%)";
+  const { loadItems } = useGroceryStore();
 
   useEffect(() => {
-    loadItems();
-  }, []);
+    if (isSignedIn) {
+      loadItems();
+    }
+  }, [isSignedIn]);
 
   if (!isLoaded) {
     return null;
@@ -27,33 +24,13 @@ export default function TabsLayout() {
   }
 
   return (
-    <NativeTabs tintColor={tabTintColor}>
-      <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Label>List</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          sf={{
-            default: "list.bullet.clipboard",
-            selected: "list.bullet.clipboard.fill",
-          }}
-          md="list"
-        />
-      </NativeTabs.Trigger>
-
-      <NativeTabs.Trigger name="planner">
-        <NativeTabs.Trigger.Icon
-          sf={{ default: "plus.circle", selected: "plus.circle.fill" }}
-          md="add"
-        />
-        <NativeTabs.Trigger.Label>Planner</NativeTabs.Trigger.Label>
-      </NativeTabs.Trigger>
-
-      <NativeTabs.Trigger name="insights">
-        <NativeTabs.Trigger.Icon
-          sf={{ default: "chart.bar", selected: "chart.bar.fill" }}
-          md="analytics"
-        />
-        <NativeTabs.Trigger.Label>Insights</NativeTabs.Trigger.Label>
-      </NativeTabs.Trigger>
-    </NativeTabs>
+    <Tabs 
+      tabBar={(props) => <CustomTabBar {...props} />} 
+      screenOptions={{ headerShown: false }}
+    >
+      <Tabs.Screen name="index" options={{ title: 'List' }} />
+      <Tabs.Screen name="planner" options={{ title: 'Planner' }} />
+      <Tabs.Screen name="insights" options={{ title: 'Insights' }} />
+    </Tabs>
   );
 }
