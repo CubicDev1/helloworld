@@ -50,8 +50,12 @@ author = 11325534
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npx expo start --go -c --tunnel"
+args = "npx expo start -c --tunnel"
 
 [[ports]]
 localPort = 8081
 externalPort = 80
+
+[[ports]]
+localPort = 19000
+externalPort = 3000
