@@ -23,10 +23,15 @@ const ListHeroCard = () => {
     const message = `🛒 Grocify Shopping List\n\n${formattedItems}\n\nShared via Grocify`;
 
     try {
-      await Share.share({
-        message,
-        title: 'Grocify Shopping List',
-      });
+      await Share.share(
+        {
+          message,
+          title: 'Grocify Shopping List',
+        },
+        {
+          dialogTitle: 'Share Grocify List via...', // Android specific
+        }
+      );
     } catch (error) {
       console.error("Error sharing list:", error);
     }
