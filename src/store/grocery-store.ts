@@ -22,12 +22,14 @@ export type CreateItemInput = {
 type ItemsResponse = { items: GroceryItem[] };
 type ItemResponse = { item: GroceryItem };
 
-type GroceryStore = {
+export type GroceryStore = {
   items: GroceryItem[];
+  offlineQueue: CreateItemInput[];
   isLoading: boolean;
   error: string | null;
   loadItems: () => Promise<void>;
-  addItem: (input: CreateItemInput) => Promise<GroceryItem | void>;
+  addItem: (input: CreateItemInput, isSync?: boolean) => Promise<GroceryItem | void>;
+  syncOfflineItems: () => Promise<void>;
   updateQuantity: (id: string, quantity: number) => Promise<void>;
   togglePurchased: (id: string) => Promise<void>;
   removeItem: (id: string) => Promise<void>;
@@ -47,6 +49,7 @@ const safeFetchJson = async (res: Response) => {
 
 export const useGroceryStore = create<GroceryStore>((set, get) => ({
   items: [],
+  offlineQueue: [],
   isLoading: false,
   error: null,
 
@@ -58,16 +61,46 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
 
       if (!res.ok) throw new Error(payload.error || `Request failed (${res.status})`);
       set({ items: payload.items });
+      
+      // Auto-sync offline queue when we successfully connect!
+      get().syncOfflineItems();
     } catch (error: any) {
-      console.error("Error loading items:", error);
-      set({ error: error.message || "Something went wrong" });
+      console.warn("Offline or error loading items:", error);
+      set({ error: error.message || "Working offline" });
     } finally {
       set({ isLoading: false });
     }
   },
 
-  addItem: async (input) => {
+  syncOfflineItems: async () => {
+    const queue = get().offlineQueue;
+    if (!queue || queue.length === 0) return;
+    
+    console.log("Syncing offline items:", queue.length);
+    set({ offlineQueue: [] }); // Clear queue before syncing so we don't infinitely loop
+    for (const item of queue) {
+      await get().addItem(item, true);
+    }
+  },
+
+  addItem: async (input, isSync = false) => {
     set({ error: null });
+    
+    const tempId = `temp-${Date.now()}-${Math.random()}`;
+    const tempItem: GroceryItem = {
+      id: tempId,
+      name: input.name,
+      category: input.category,
+      quantity: Math.max(1, input.quantity),
+      purchased: false,
+      priority: input.priority,
+    };
+
+    // Optimistically add to UI immediately so the user doesn't wait
+    if (!isSync) {
+      set((state) => ({ items: [tempItem, ...state.items] }));
+    }
+
     try {
       const res = await fetch("/api/items", {
         method: "POST",
@@ -82,16 +115,32 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
       const payload = (await safeFetchJson(res)) as ItemResponse & { error?: string };
       if (!res.ok) throw new Error(payload.error || `Request failed (${res.status})`);
 
-      set((state) => ({ items: [payload.item, ...state.items] }));
+      // Replace temp item with real DB item
+      set((state) => ({ 
+        items: state.items.map(item => item.id === tempId ? payload.item : item)
+      }));
       return payload.item;
     } catch (error: any) {
-      console.error("Error adding item:", error);
-      set({ error: error.message || "Something went wrong" });
+      console.warn("Network offline, queued item adding:");
+      // Add to offline queue if network fails
+      if (!isSync) {
+        set((state) => ({ offlineQueue: [...state.offlineQueue, input] }));
+      } else {
+        // If it was already a sync attempt and it failed AGAIN, push back to queue
+        set((state) => ({ offlineQueue: [...state.offlineQueue, input] }));
+      }
     }
   },
+
   updateQuantity: async (id, quantity) => {
     const nextQuantity = Math.max(1, quantity);
     set({ error: null });
+    
+    // Optimistic Update
+    const originalItems = get().items;
+    set((state) => ({
+      items: state.items.map((item) => (item.id === id ? { ...item, quantity: nextQuantity } : item)),
+    }));
 
     try {
       const res = await fetch(`/api/items/${id}`, {
@@ -101,12 +150,9 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
       });
       const payload = (await safeFetchJson(res)) as ItemResponse & { error?: string };
       if (!res.ok) throw new Error(payload.error || `Request failed (${res.status})`);
-      set((state) => ({
-        items: state.items.map((item) => (item.id === id ? payload.item : item)),
-      }));
     } catch (error: any) {
-      console.error("Error updating quantity:", error);
-      set({ error: error.message || "Something went wrong" });
+      console.warn("Offline, reverting quantity update");
+      set({ items: originalItems, error: "Offline: Could not update quantity" });
     }
   },
 
@@ -116,6 +162,13 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
 
     const nextPurchased = !currentItem.purchased;
     set({ error: null });
+    
+    // Optimistic Update
+    const originalItems = get().items;
+    set((state) => ({
+      items: state.items.map((item) => (item.id === id ? { ...item, purchased: nextPurchased } : item)),
+    }));
+
     try {
       const res = await fetch(`/api/items/${id}`, {
         method: "PATCH",
@@ -125,46 +178,44 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
 
       const payload = (await safeFetchJson(res)) as ItemResponse & { error?: string };
       if (!res.ok) throw new Error(payload.error || `Request failed (${res.status})`);
-
-      set((state) => ({
-        items: state.items.map((item) => (item.id === id ? payload.item : item)),
-      }));
     } catch (error: any) {
-      console.error("Error toggling purchased:", error);
-      set({ error: error.message || "Something went wrong" });
+      console.warn("Offline, reverting toggle");
+      set({ items: originalItems, error: "Offline: Could not update status" });
     }
   },
 
   removeItem: async (id) => {
     set({ error: null });
+    // Optimistic removal
+    const originalItems = get().items;
+    set((state) => ({ items: state.items.filter((item) => item.id !== id) }));
+
     try {
       const res = await fetch(`/api/items/${id}`, { method: "DELETE" });
       if (!res.ok) {
         const payload = await safeFetchJson(res).catch(() => ({}));
         throw new Error(payload.error || `Request failed (${res.status})`);
       }
-
-      set((state) => ({ items: state.items.filter((item) => item.id !== id) }));
     } catch (error: any) {
-      console.error("Error removing item:", error);
-      set({ error: error.message || "Something went wrong" });
+      console.warn("Offline, reverting remove");
+      set({ items: originalItems, error: "Offline: Could not remove item" });
     }
   },
 
   clearPurchased: async () => {
     set({ error: null });
+    const originalItems = get().items;
+    set((state) => ({ items: state.items.filter((item) => !item.purchased) }));
+
     try {
       const res = await fetch("/api/items/clear-purchased", { method: "POST" });
       if (!res.ok) {
         const payload = await safeFetchJson(res).catch(() => ({}));
         throw new Error(payload.error || `Request failed (${res.status})`);
       }
-
-      const items = get().items.filter((item) => !item.purchased);
-      set({ items });
     } catch (error: any) {
-      console.error("Error clearing purchased:", error);
-      set({ error: error.message || "Something went wrong" });
+      console.warn("Offline, reverting clear purchased");
+      set({ items: originalItems, error: "Offline: Could not clear purchased ones" });
     }
   },
 }));

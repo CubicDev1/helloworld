@@ -9,13 +9,17 @@ import CompletedItems from "@/components/list/CompletedItems";
 import ListHeroCard from "@/components/list/ListHeroCard";
 import TabScreenBackground from "@/components/TabScreenBackground";
 import QuickAddModal from "@/components/list/QuickAddModal";
+import VoiceAddModal from "@/components/list/VoiceAddModal";
 
 export default function ListScreen() {
   const { items } = useGroceryStore();
   const [modalVisible, setModalVisible] = useState(false);
+  const [voiceVisible, setVoiceVisible] = useState(false);
   const insets = useSafeAreaInsets();
 
   const pendingItems = items.filter((item) => !item.purchased);
+
+  const bottomPosition = Platform.OS === 'ios' ? insets.bottom + 90 : 100;
 
   return (
     <View style={{ flex: 1 }}>
@@ -41,11 +45,35 @@ export default function ListScreen() {
         ListFooterComponent={<CompletedItems />}
       />
 
-      {/* FAB (Floating Add Button) */}
+      {/* Secondary FAB (Voice Smart Add) */}
       <TouchableOpacity 
         style={{
           position: "absolute",
-          bottom: Platform.OS === 'ios' ? insets.bottom + 90 : 100,
+          bottom: bottomPosition + 76,
+          right: 24,
+          width: 52,
+          height: 52,
+          borderRadius: 26,
+          justifyContent: "center",
+          alignItems: "center",
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.3,
+          shadowRadius: 5,
+          elevation: 8,
+        }}
+        className="bg-card dark:bg-card border border-border"
+        activeOpacity={0.8}
+        onPress={() => setVoiceVisible(true)}
+      >
+        <FontAwesome name="microphone" size={22} className="text-foreground" color="#10b981" />
+      </TouchableOpacity>
+
+      {/* Primary FAB (Quick Add) */}
+      <TouchableOpacity 
+        style={{
+          position: "absolute",
+          bottom: bottomPosition,
           right: 20,
           width: 64,
           height: 64,
@@ -66,6 +94,7 @@ export default function ListScreen() {
       </TouchableOpacity>
 
       <QuickAddModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+      <VoiceAddModal visible={voiceVisible} onClose={() => setVoiceVisible(false)} />
     </View>
   );
 }

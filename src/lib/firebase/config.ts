@@ -1,5 +1,13 @@
 import { initializeApp, getApp, getApps } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { initializeAuth, getReactNativePersistence, getAuth } from "firebase/auth";
+import * as SecureStore from "expo-secure-store";
+
+// Create a persistence adapter utilizing Expo's native encrypted secure store
+const securePersistence = {
+  getItem: async (key: string) => await SecureStore.getItemAsync(key),
+  setItem: async (key: string, value: string) => await SecureStore.setItemAsync(key, value),
+  removeItem: async (key: string) => await SecureStore.deleteItemAsync(key),
+};
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -11,6 +19,17 @@ const firebaseConfig = {
 };
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const auth = getAuth(app);
+
+// Bind secure persistence so users stay logged in eternally (like cached cookies)
+let auth: any;
+try {
+  // If app is newly initialized, we use initializeAuth explicitly.
+  auth = initializeAuth(app, {
+    persistence: getReactNativePersistence(securePersistence)
+  });
+} catch (error) {
+  // If initialized previously via hot reload
+  auth = getAuth(app);
+}
 
 export { app, auth };
