@@ -3,10 +3,13 @@ import { initializeAuth, getReactNativePersistence, getAuth } from "firebase/aut
 import * as SecureStore from "expo-secure-store";
 
 // Create a persistence adapter utilizing Expo's native encrypted secure store
+// Android SecureStore restricts keys to alphanumeric characters, ".", "-", and "_"
+const sanitizeKey = (key: string) => key.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+
 const securePersistence = {
-  getItem: async (key: string) => await SecureStore.getItemAsync(key),
-  setItem: async (key: string, value: string) => await SecureStore.setItemAsync(key, value),
-  removeItem: async (key: string) => await SecureStore.deleteItemAsync(key),
+  getItem: async (key: string) => await SecureStore.getItemAsync(sanitizeKey(key)),
+  setItem: async (key: string, value: string) => await SecureStore.setItemAsync(sanitizeKey(key), value),
+  removeItem: async (key: string) => await SecureStore.deleteItemAsync(sanitizeKey(key)),
 };
 
 const firebaseConfig = {
