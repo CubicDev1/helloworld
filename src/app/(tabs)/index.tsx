@@ -2,8 +2,9 @@ import PendingItemCard from "@/components/list/PendingItemCard";
 import { useGroceryStore } from "@/store/grocery-store";
 import { FlatList, Text, View, TouchableOpacity, Platform } from "react-native";
 import { useState } from "react";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome6 } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useColorScheme } from "nativewind";
 
 import CompletedItems from "@/components/list/CompletedItems";
 import ListHeroCard from "@/components/list/ListHeroCard";
@@ -16,9 +17,10 @@ export default function ListScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [voiceVisible, setVoiceVisible] = useState(false);
   const insets = useSafeAreaInsets();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
 
   const pendingItems = items.filter((item) => !item.purchased);
-
   const bottomPosition = Platform.OS === 'ios' ? insets.bottom + 90 : 100;
 
   return (
@@ -28,49 +30,59 @@ export default function ListScreen() {
         data={pendingItems}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <PendingItemCard item={item} />}
-        contentContainerStyle={{ padding: 20, gap: 14, paddingBottom: 160 }}
+        contentContainerStyle={{ padding: 20, gap: 16, paddingBottom: 180 }}
         contentInsetAdjustmentBehavior="automatic"
         ListHeaderComponent={
-          <View style={{ gap: 14, paddingTop: 20 }}>
+          <View style={{ gap: 20, paddingTop: 16 }}>
             <TabScreenBackground />
             <ListHeroCard />
-            <View className="flex-row items-center justify-between px-1">
-              <Text className="text-sm font-semibold uppercase tracking-[1px] text-muted-foreground">
-                Shopping items
+            {/* Section label — editorial magazine style */}
+            <View className="flex-row items-center justify-between px-1 mt-2">
+              <Text
+                className="text-muted-foreground"
+                style={{ fontSize: 11, fontWeight: "700", letterSpacing: 1.2, textTransform: "uppercase" }}
+              >
+                Shopping Items
               </Text>
-              <Text className="text-sm text-muted-foreground">{pendingItems.length} active</Text>
+              <FontAwesome6
+                name="sliders"
+                size={14}
+                color={isDark ? "#475569" : "#94a3b8"}
+              />
             </View>
           </View>
         }
         ListFooterComponent={<CompletedItems />}
       />
 
-      {/* Secondary FAB (Voice Smart Add) */}
-      <TouchableOpacity 
+      {/* Voice Mic FAB — ghost style */}
+      <TouchableOpacity
         style={{
           position: "absolute",
           bottom: bottomPosition + 76,
           right: 24,
-          width: 52,
-          height: 52,
-          borderRadius: 26,
+          width: 50,
+          height: 50,
+          borderRadius: 25,
           justifyContent: "center",
           alignItems: "center",
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.3,
-          shadowRadius: 5,
-          elevation: 8,
+          backgroundColor: isDark ? "rgba(15,23,42,0.9)" : "rgba(255,255,255,0.9)",
+          shadowColor: isDark ? "#000" : "rgba(0,106,45,0.1)",
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: isDark ? 0.4 : 1,
+          shadowRadius: 16,
+          elevation: 6,
+          borderWidth: 1,
+          borderColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
         }}
-        className="bg-card dark:bg-card border border-border"
         activeOpacity={0.8}
         onPress={() => setVoiceVisible(true)}
       >
-        <FontAwesome name="microphone" size={22} className="text-foreground" color="#10b981" />
+        <FontAwesome6 name="microphone" size={18} color={isDark ? "#6bff8f" : "#006a2d"} />
       </TouchableOpacity>
 
-      {/* Primary FAB (Quick Add) */}
-      <TouchableOpacity 
+      {/* Primary Plus FAB — deep green with green-tinted shadow */}
+      <TouchableOpacity
         style={{
           position: "absolute",
           bottom: bottomPosition,
@@ -80,17 +92,17 @@ export default function ListScreen() {
           borderRadius: 32,
           justifyContent: "center",
           alignItems: "center",
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 6 },
-          shadowOpacity: 0.35,
-          shadowRadius: 8,
+          backgroundColor: isDark ? "#6bff8f" : "#006a2d",
+          shadowColor: isDark ? "rgba(107,255,143,0.35)" : "rgba(0,106,45,0.3)",
+          shadowOffset: { width: 0, height: 12 },
+          shadowOpacity: 1,
+          shadowRadius: 24,
           elevation: 10,
         }}
-        className="bg-primary dark:bg-primary"
         activeOpacity={0.8}
         onPress={() => setModalVisible(true)}
       >
-        <FontAwesome name="plus" size={28} color="#FFFFFF" />
+        <FontAwesome6 name="plus" size={24} color={isDark ? "#0f172a" : "#ffffff"} />
       </TouchableOpacity>
 
       <QuickAddModal visible={modalVisible} onClose={() => setModalVisible(false)} />

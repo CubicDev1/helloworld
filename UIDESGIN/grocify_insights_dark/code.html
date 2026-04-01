@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Grocify Insights</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0F172A;
+        }
+        .headline-font {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "on-secondary": "#d3fce7",
+                "on-primary-fixed": "#004a1d",
+                "primary-fixed-dim": "#5bf083",
+                "surface-variant": "#dadddf",
+                "on-surface": "#F1F5F9",
+                "inverse-on-surface": "#9b9d9e",
+                "surface-container-highest": "#334155",
+                "surface-container-lowest": "#1E293B",
+                "tertiary": "#994100",
+                "secondary-fixed": "#c3ecd7",
+                "on-secondary-fixed-variant": "#3e6353",
+                "primary-container": "#22C55E",
+                "outline-variant": "#abadae",
+                "surface-dim": "#0F172A",
+                "tertiary-container": "#ff955a",
+                "on-tertiary": "#fff0e9",
+                "on-surface-variant": "#94a3b8",
+                "error-container": "#f95630",
+                "background": "#0F172A",
+                "primary-fixed": "#6bff8f",
+                "on-tertiary-fixed-variant": "#632800",
+                "error-dim": "#b92902",
+                "on-error": "#ffefec",
+                "on-secondary-fixed": "#224637",
+                "surface": "#0F172A",
+                "tertiary-dim": "#863800",
+                "surface-container-high": "#1e293b",
+                "surface-container-low": "#0f172a",
+                "surface-bright": "#1e293b",
+                "surface-tint": "#22C55E",
+                "inverse-primary": "#6bff8f",
+                "inverse-surface": "#0c0f10",
+                "secondary": "#3e6353",
+                "on-primary-container": "#005f28",
+                "surface-container": "#1e293b",
+                "primary-dim": "#166534",
+                "outline": "#475569",
+                "on-tertiary-container": "#552100",
+                "secondary-container": "#334155",
+                "secondary-fixed-dim": "#b5ddc9",
+                "error": "#b02500",
+                "tertiary-fixed-dim": "#ff7f2f",
+                "on-background": "#F1F5F9",
+                "on-secondary-container": "#94a3b8",
+                "tertiary-fixed": "#ff955a",
+                "on-tertiary-fixed": "#2e0e00",
+                "secondary-dim": "#325747",
+                "primary": "#22C55E",
+                "on-primary-fixed-variant": "#22C55E",
+                "on-error-container": "#520c00",
+                "on-primary": "#052e16"
+              },
+              fontFamily: {
+                "headline": ["Plus Jakarta Sans"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+              },
+              borderRadius: {"DEFAULT": "1rem", "lg": "1.5rem", "xl": "2rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-32">
+<!-- Top App Bar -->
+<nav class="w-full top-0 sticky bg-[#f5f6f7] dark:bg-slate-950 z-50">
+<div class="flex items-center justify-between px-6 py-4 w-full max-w-screen-xl mx-auto">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container">
+<img alt="Asia" class="w-full h-full object-cover" data-alt="Close-up portrait of a woman with a warm smile in soft natural lighting, professional and friendly aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWWF6Lmwn4C96Fk-3t99mEFgxi49HGdM_bbpmrpzfebKwWbMg1kfoIIBwNHoTV6rMiLqcQKoBz0BNw-HWktyveeLvhJ9OOBjSiqLdaQMScDew5F2n7RZHhOikFa0UWnzPGbGXqVflRHMWtEP51zlDwpX5x4LbRrpGDhG2AN610v1SCfd0YP61LkzXu3hVV5oayFpORZYbE1bS-cf6mFP0Zphv4ihY452SEO8ISOMOQTpGYayzCtwKvZBoSAOKIjoAGAHaCcs-lDNo"/>
+</div>
+<div class="flex flex-col">
+<span class="text-green-800 dark:text-green-400 font-extrabold text-xl tracking-tight headline-font">Insights</span>
+</div>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-green-50 dark:hover:bg-slate-900 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-green-800 dark:text-green-400">settings</span>
+</button>
+</div>
+</nav>
+<main class="px-6 pt-4 max-w-screen-xl mx-auto space-y-8">
+<!-- User Profile Card -->
+<section class="bg-surface-container-lowest rounded-lg p-6 shadow-sm relative overflow-hidden">
+<!-- Decorative organic shape -->
+<div class="absolute -right-12 -top-12 w-32 h-32 bg-primary/10 rounded-full blur-3xl"></div>
+<div class="flex items-center justify-between relative z-10">
+<div class="space-y-1">
+<h2 class="headline-font text-2xl font-bold">Asia</h2>
+<p class="text-on-surface-variant text-sm">user@user.com</p>
+</div>
+<div class="bg-primary/10 p-3 rounded-full">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+</div>
+</div>
+</section>
+<!-- Stats Bento Grid -->
+<section class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-lowest p-5 rounded-lg col-span-2 flex items-center justify-between">
+<div>
+<span class="text-xs font-bold tracking-widest text-on-surface-variant uppercase headline-font">Total Items</span>
+<div class="text-4xl font-extrabold headline-font mt-1">3</div>
+</div>
+<div class="h-12 w-12 bg-primary/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">inventory_2</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-lg space-y-2">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-sm">pending_actions</span>
+<span class="text-[10px] font-bold tracking-widest uppercase headline-font">Pending</span>
+</div>
+<div class="text-3xl font-bold headline-font">3</div>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-lg space-y-2">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+<span class="text-[10px] font-bold tracking-widest uppercase headline-font">Completed</span>
+</div>
+<div class="text-3xl font-bold headline-font">0</div>
+</div>
+</section>
+<!-- Analytics Section -->
+<section class="space-y-6">
+<div class="flex items-center justify-between">
+<h3 class="headline-font text-lg font-bold">Analytics</h3>
+<span class="text-[10px] font-bold text-tertiary bg-tertiary/10 px-2 py-1 rounded-full uppercase">High Priority: 0</span>
+</div>
+<!-- Completion Rate -->
+<div class="bg-surface-container-lowest rounded-lg p-6 space-y-4">
+<div class="flex justify-between items-end">
+<div>
+<p class="text-xs font-bold text-on-surface-variant uppercase tracking-wider headline-font">Completion rate</p>
+<h4 class="text-3xl font-extrabold headline-font">0%</h4>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant/30 text-4xl">analytics</span>
+</div>
+<div class="w-full h-3 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-1000" style="width: 0%"></div>
+</div>
+<p class="text-xs text-on-surface-variant">Start crossing items off your list to see progress!</p>
+</div>
+<!-- Items by Category -->
+<div class="bg-surface-container-lowest rounded-lg p-6 space-y-6">
+<p class="text-xs font-bold text-on-surface-variant uppercase tracking-wider headline-font">Items by category</p>
+<div class="space-y-4">
+<!-- Category: Dairy -->
+<div class="space-y-2">
+<div class="flex justify-between items-center text-sm">
+<span class="font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">egg</span>
+                                Dairy
+                            </span>
+<span class="text-on-surface-variant font-bold">2 items</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 66%"></div>
+</div>
+</div>
+<!-- Category: Produce -->
+<div class="space-y-2">
+<div class="flex justify-between items-center text-sm">
+<span class="font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">eco</span>
+                                Produce
+                            </span>
+<span class="text-on-surface-variant font-bold">1 item</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 33%"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Action Button -->
+<div class="pt-4">
+<button class="w-full bg-primary text-on-primary font-bold py-4 px-6 rounded-full shadow-lg shadow-primary/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-all headline-font">
+<span class="material-symbols-outlined">delete_sweep</span>
+                Clear completed items
+            </button>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full rounded-t-[2rem] z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-[0_-10px_40px_rgba(0,106,45,0.08)]">
+<div class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3">
+<!-- Planner -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-green-600 dark:hover:text-green-300 transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-wider font-bold mt-1">Planner</span>
+</a>
+<!-- List -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-green-600 dark:hover:text-green-300 transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">shopping_basket</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-wider font-bold mt-1">List</span>
+</a>
+<!-- Insights (Active) -->
+<a class="flex flex-col items-center justify-center bg-[#6bff8f] dark:bg-green-900/40 text-green-900 dark:text-green-100 rounded-full px-5 py-2 active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">insights</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-wider font-bold mt-1">Insights</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-green-600 dark:hover:text-green-300 transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-wider font-bold mt-1">Profile</span>
+</a>
+</div>
+</nav>
+</body></html>
