@@ -106,8 +106,15 @@ export default function QuickAddModal({ visible, onClose }: QuickAddModalProps) 
         <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={onClose} />
 
         <Animated.View
-          style={{ transform: [{ translateY: slideAnim }] }}
-          className="bg-card rounded-t-[32px] pt-3 pb-10 px-6"
+          style={{
+            transform: [{ translateY: slideAnim }],
+            backgroundColor: isDark ? "#1a2332" : "#ffffff",
+            borderTopLeftRadius: 32,
+            borderTopRightRadius: 32,
+            paddingTop: 12,
+            paddingBottom: 40,
+            paddingHorizontal: 24,
+          }}
         >
           {/* Handle */}
           <View className="w-10 h-1 bg-muted rounded-full self-center mb-8" />
