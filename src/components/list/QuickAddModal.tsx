@@ -99,7 +99,7 @@ export default function QuickAddModal({ visible, onClose }: QuickAddModalProps) 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1 justify-end"
         style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
       >
